@@ -32,22 +32,36 @@ namespace SolutionProjectsDependencies
         {
             outFile.WriteLine("<!DOCTYPE html>");
             outFile.WriteLine("<html>");
-            outFile.WriteLine("  <body>");
+            outFile.WriteLine("  <body style=\"font-family: Tahoma;\">");
             outFile.WriteLine("    <script src=\"https://unpkg.com/mermaid@8.4.8/dist/mermaid.min.js\"></script>");
             outFile.WriteLine("    <script>mermaid.initialize({startOnLoad:true});</script>");
             outFile.WriteLine($"    <h2>{slnFilePath}</h2>");
+            outFile.WriteLine("    <div>Project name [a:b]</div>");
+            outFile.WriteLine("    <div>a - number of projects on which project depends</div>");
+            outFile.WriteLine("    <div>b - number of dependent projects</div>");
             outFile.WriteLine("    <div class=\"mermaid\">");
             outFile.WriteLine("      graph LR");
         }
 
         private void WrireDependenciesPart(StreamWriter outFile)
         {
+            var usedIds = new HashSet<string>();
+
             foreach (var p in _projects)
             {
                 foreach (var r in p.GetReferences())
                 {
-                    outFile.WriteLine($"{p.GetMermaidInfo()} --> {r.GetMermaidInfo()}");
+                    outFile.WriteLine($"{GetMermaidInfo(p)} --> {GetMermaidInfo(r)}");
                 }
+            }
+
+            string GetMermaidInfo(ProjectInfo pi)
+            {
+                if (usedIds.Contains(pi.Id))
+                    return pi.Id;
+
+                usedIds.Add(pi.Id);
+                return pi.GetMermaidInfo();
             }
         }
 

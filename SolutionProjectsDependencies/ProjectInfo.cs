@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace SolutionProjectsDependencies
@@ -17,7 +16,7 @@ namespace SolutionProjectsDependencies
         {
             Id = $"P{_staticId++}";
             Path = path;
-            ShortName = new FileInfo(path).Name;
+            ShortName = System.IO.Path.GetFileNameWithoutExtension(path);
         }
 
         public void AddReference(ProjectInfo destProj)
@@ -41,7 +40,7 @@ namespace SolutionProjectsDependencies
                 .Select(x => x.Value);
 
         public string GetMermaidInfo()
-            => $"{Id}(\"{ShortName} <br />depends:{GetReferences().Count()} dependent:{GetRevReferences().Count()}\")";
+            => $"{Id}(\"{ShortName} [{GetReferences().Count()}:{GetRevReferences().Count()}]\")";
 
         private static int _staticId = 100;
     }
